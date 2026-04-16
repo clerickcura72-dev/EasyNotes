@@ -10,24 +10,24 @@ use Illuminate\Support\Facades\Auth;
 class NoteController extends Controller
 {
     public function index(Request $request)
-    {
-        $folders = Folder::all();
+{
+    $folders = Folder::where('user_id', Auth::id())->get();
 
-        $folderId = $request->query('folder_id');
+    $folderId = $request->query('folder_id');
 
-        $notes = Note::query()
-            ->when($folderId, function ($q) use ($folderId) {
-                $q->where('folder_id', $folderId);
-            })
-            ->get();
+    $notes = Note::where('user_id', Auth::id())
+        ->when($folderId, function ($q) use ($folderId) {
+            $q->where('folder_id', $folderId);
+        })
+        ->get();
 
-        return view('notes', compact('notes', 'folders'));
-    }
+    return view('notes', compact('notes', 'folders'));
+}
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     Note::create([
-        'user_id' => Auth::id(),
+        'user_id' => Auth::id(), // 🔥 IMPORTANT
         'title' => $request->title,
         'content' => $request->content,
         'folder_id' => $request->folder_id ?: null
