@@ -51,15 +51,49 @@ class NoteController extends Controller
 }
 
     public function deleteNote($id)
-    {
-        Note::where('id', $id)->delete();
-        return back();
-    }
+{
+    Note::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->delete();
 
-    public function deleteFolder($id)
-    {
-        Note::where('folder_id', $id)->delete();
-        Folder::where('id', $id)->delete();
-        return back();
-    }
+    return back();
+}
+
+public function deleteFolder($id)
+{
+    Note::where('folder_id', $id)
+        ->where('user_id', Auth::id())
+        ->delete();
+
+    Folder::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->delete();
+
+    return back();
+}
+
+
+public function edit($id)
+{
+    $note = Note::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+
+    $folders = Folder::where('user_id', Auth::id())->get();
+
+    return view('edit_note', compact('note', 'folders'));
+}
+
+public function update(Request $request, $id)
+{
+    Note::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'folder_id' => $request->folder_id
+        ]);
+
+    return redirect('/notes');
+}
 }

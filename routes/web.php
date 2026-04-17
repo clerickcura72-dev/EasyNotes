@@ -20,3 +20,6 @@ Route::post('/folders', [NoteController::class, 'createFolder']);
 
 Route::post('/notes/delete/{id}', [NoteController::class, 'deleteNote']);
 Route::post('/folders/delete/{id}', [NoteController::class, 'deleteFolder']);
+
+Route::get('/notes/edit/{id}', [NoteController::class, 'edit']);
+Route::post('/notes/update/{id}', [NoteController::class, 'update']);
